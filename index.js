@@ -11,7 +11,7 @@ const ConfigDefaults = {
   baseDir: ".",
   binDir: ".bin",
   cgo: 0,
-  cmd: 'GOOS=linux go build -ldflags="-s -w"',
+  cmd: 'GOOS=linux go build -trimpath -ldflags="-s -w"',
   monorepo: false,
 };
 
