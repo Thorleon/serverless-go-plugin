@@ -13,9 +13,8 @@ const ConfigDefaults = {
   cgo: 0,
   cmd: 'GOOS=linux go build -ldflags="-s -w"',
   monorepo: false,
+  supportedRuntimes: ["go1.x"],
 };
-
-const GoRuntime = "go1.x";
 
 module.exports = class Plugin {
   constructor(serverless, options) {
@@ -97,7 +96,7 @@ module.exports = class Plugin {
     const config = this.getConfig();
 
     const runtime = func.runtime || this.serverless.service.provider.runtime;
-    if (runtime !== GoRuntime) {
+    if (!config.supportedRuntimes.includes(runtime)) {
       return;
     }
 

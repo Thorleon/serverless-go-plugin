@@ -75,6 +75,52 @@ describe("Go Plugin", () => {
       );
     });
 
+    it("compiles only Go functions", async () => {
+      // given
+      const config = merge(
+        {
+          service: {
+            custom: {
+              go: {
+                supportedRuntimes: ["go1.x", "provided.al2"],
+              },
+            },
+            functions: {
+              testFunc1: {
+                name: "testFunc1",
+                runtime: "provided.al2",
+                handler: "functions/func1/main.go",
+              },
+              testFunc2: {
+                name: "testFunc2",
+                runtime: "go1.x",
+                handler: "functions/func2/main.go",
+              },
+            },
+          },
+        },
+        serverlessStub
+      );
+      const plugin = new Plugin(config);
+
+      // when
+      await plugin.hooks["before:package:createDeploymentArtifacts"]();
+
+      // then
+      expect(config.service.functions.testFunc2.handler).to.equal(
+        `.bin/testFunc2`
+      );
+      expect(execStub).to.have.been.calledWith(
+        `go build -ldflags="-s -w" -o .bin/testFunc2 functions/func2/main.go`
+      );
+      expect(config.service.functions.testFunc1.handler).to.equal(
+        `.bin/testFunc1`
+      );
+      expect(execStub).to.have.been.calledWith(
+        `go build -ldflags="-s -w" -o .bin/testFunc1 functions/func1/main.go`
+      );
+    });
+
     it("compiles Go function w/ custom command", async () => {
       // given
       const config = merge(
