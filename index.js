@@ -117,7 +117,7 @@ module.exports = class Plugin {
     }
     try {
       const [env, command] = parseCommand(
-        `${config.cmd} -o ${compileBinPath} ${handler}`
+        `${config.cmd} -o bootstrap ${handler}`
       );
       await exec(command, {
         cwd: cwd,
@@ -141,7 +141,7 @@ module.exports = class Plugin {
     if (process.platform === "win32") {
       binPath = binPath.replace(/\\/g, "/");
     }
-    this.serverless.service.functions[name].handler = binPath;
+    this.serverless.service.functions[name].handler = "bootstrap";
     const packageConfig = {
       individually: true,
       exclude: [`./**`],
