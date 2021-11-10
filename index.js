@@ -153,6 +153,11 @@ module.exports = class Plugin {
       individually: true,
       artifact: zipPath,
     };
+    if (this.serverless.service.functions[name].package) {
+      packageConfig.include = packageConfig.include.concat(
+        this.serverless.service.functions[name].package.include
+      );
+    }
     this.serverless.service.functions[name].package = packageConfig;
   }
 
