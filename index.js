@@ -6,6 +6,8 @@ const os = require("os");
 const prettyHrtime = require("pretty-hrtime");
 const chalk = require("chalk");
 const path = require("path");
+const AdmZip = require("adm-zip");
+const { mkdirSync, writeFileSync, readFileSync } = require("fs");
 
 const ConfigDefaults = {
   baseDir: ".",
@@ -117,7 +119,7 @@ module.exports = class Plugin {
     }
     try {
       const [env, command] = parseCommand(
-        `${config.cmd} -o bootstrap ${handler}`
+        `${config.cmd} -o ${compileBinPath} ${handler}`
       );
       await exec(command, {
         cwd: cwd,
@@ -141,17 +143,16 @@ module.exports = class Plugin {
     if (process.platform === "win32") {
       binPath = binPath.replace(/\\/g, "/");
     }
-    this.serverless.service.functions[name].handler = "bootstrap";
+    this.serverless.service.functions[name].handler = binPath;
+    const zip = new AdmZip();
+
+    zip.addFile("bootstrap", readFileSync(binPath), "", 0x755 << 16);
+    const zipPath = binPath + ".zip";
+    zip.writeZip(zipPath);
     const packageConfig = {
       individually: true,
-      exclude: [`./**`],
-      include: [binPath],
+      artifact: zipPath,
     };
-    if (this.serverless.service.functions[name].package) {
-      packageConfig.include = packageConfig.include.concat(
-        this.serverless.service.functions[name].package.include
-      );
-    }
     this.serverless.service.functions[name].package = packageConfig;
   }
 
