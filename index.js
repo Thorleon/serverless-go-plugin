@@ -146,7 +146,7 @@ module.exports = class Plugin {
     this.serverless.service.functions[name].handler = binPath;
     const zip = new AdmZip();
 
-    zip.addFile("bootstrap", readFileSync(binPath), "", 0x755 << 16);
+    zip.addFile("bootstrap", readFileSync(binPath), "", 0o755);
     const zipPath = binPath + ".zip";
     zip.writeZip(zipPath);
     const packageConfig = {
