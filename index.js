@@ -156,7 +156,10 @@ module.exports = class Plugin {
   }
 
   generatePackageConfig(func, config, binPath) {
-    if (config.buildAsBootstrap && func.runtime === "provided.al2") {
+    if (
+      config.buildProvidedRuntimeAsBootstrap &&
+      func.runtime === "provided.al2"
+    ) {
       const zip = new AdmZip();
       zip.addFile("bootstrap", readFileSync(binPath), "", 0o755);
       const zipPath = binPath + ".zip";
