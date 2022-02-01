@@ -398,13 +398,14 @@ describe("Go Plugin", () => {
           service: {
             custom: {
               go: {
+                supportedRuntimes: ["go1.x", "provided.al2"],
                 buildAsBootstrap: true,
               },
             },
             functions: {
               testFunc1: {
                 name: "testFunc1",
-                runtime: "go1.x",
+                runtime: "provided.al2",
                 handler: "functions/func1",
               },
             },

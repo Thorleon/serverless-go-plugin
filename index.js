@@ -16,7 +16,7 @@ const ConfigDefaults = {
   cmd: 'GOOS=linux go build -ldflags="-s -w"',
   monorepo: false,
   supportedRuntimes: ["go1.x"],
-  buildAsBootstrap: false,
+  buildProvidedRuntimeAsBootstrap: false,
 };
 
 module.exports = class Plugin {
@@ -145,7 +145,7 @@ module.exports = class Plugin {
       binPath = binPath.replace(/\\/g, "/");
     }
     this.serverless.service.functions[name].handler = binPath;
-    const packageConfig = this.generatePackageConfig(config, binPath);
+    const packageConfig = this.generatePackageConfig(func, config, binPath);
 
     if (this.serverless.service.functions[name].package) {
       packageConfig.include = packageConfig.include.concat(
@@ -155,8 +155,8 @@ module.exports = class Plugin {
     this.serverless.service.functions[name].package = packageConfig;
   }
 
-  generatePackageConfig(config, binPath) {
-    if (config.buildAsBootstrap) {
+  generatePackageConfig(func, config, binPath) {
+    if (config.buildAsBootstrap && func.runtime === "provided.al2") {
       const zip = new AdmZip();
       zip.addFile("bootstrap", readFileSync(binPath), "", 0o755);
       const zipPath = binPath + ".zip";
