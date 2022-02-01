@@ -399,7 +399,7 @@ describe("Go Plugin", () => {
             custom: {
               go: {
                 supportedRuntimes: ["go1.x", "provided.al2"],
-                buildAsBootstrap: true,
+                buildProvidedRuntimeAsBootstrap: true,
               },
             },
             functions: {
